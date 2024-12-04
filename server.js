@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user'); // Import user routes
 
 // Load environment variables
 require('dotenv').config();
@@ -17,8 +18,9 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error(err));
 
-// Routes
+// Routess
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes); // Register user routes
 
 // Start the server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
