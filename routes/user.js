@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt'); // Import bcrypt
 const User = require('../model/User');
 
 const router = express.Router();
@@ -34,7 +35,7 @@ router.put('/profile', authenticate, async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const updates = { name, email };
-        if (password) updates.password = await bcrypt.hash(password, 10);
+        if (password) updates.password = await bcrypt.hash(password, 10); // Hash the password
 
         const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true });
         if (!user) return res.status(404).json({ error: 'User not found' });
