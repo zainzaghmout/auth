@@ -1,23 +1,22 @@
-# Base image
-FROM node:18-alpine
+FROM node:18 AS builder
 
 # Set working directory
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Copy package files and install dependencies
 COPY package*.json ./
+RUN npm install --build-from-source
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
+# Copy application files
 COPY . .
 
-# Set environment variables
-ENV NODE_ENV=production
+# Production image
+FROM node:18
+WORKDIR /usr/src/app
 
-# Expose the application port
+# Copy dependencies from the builder stage
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY . .
+
 EXPOSE 3000
-
-# Start the application
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
